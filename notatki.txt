@@ -1,0 +1,156 @@
+const canvas = document.getElementById("game_canvas");
+const ctx = canvas.getContext("2d");
+// obrazk
+const img_background = new Image();
+img_background.src = "tło3.jpg";
+
+const img_ready = new Image();
+img_ready.src = "bunny1_ready.png";
+
+const img_jump = new Image();
+img_jump.src = "bunny1_jump.png";
+
+const img_hurt = new Image();
+img_hurt.src = "bunny1_hurt.png";
+
+const img_platform = new Image();
+img_platform.src = "platform.png";
+
+
+// klawisze i nasluch
+const keys = {
+    left: false,
+    right: false,
+    up: false,
+};
+
+window.addEventListener("keydown", function (e) {
+    if (e.code === "ArrowLeft") keys.left = true;
+    if (e.code === "ArrowRight") keys.right = true;
+    if (e.code === "ArrowUp") keys.up = true;
+});
+
+window.addEventListener("keyup", function (e) {
+    if (e.code === "ArrowLeft") keys.left = false;
+    if (e.code === "ArrowRight") keys.right = false;
+    if (e.code === "ArrowUp") keys.up = false;
+});
+
+/////////////////////////////////////////////////////gracz
+const player = {
+    x: 550,
+    y: 480,
+    speed: 5,
+
+};
+// podłoga
+const groundY = 480;
+let prevY = player.y;
+const bunnyHeight = 181;
+
+
+// platforma
+const platforms = [
+    { x: 150, y: 420, w: 250, h: 20 },
+    { x: 600, y: 330, w: 220, h: 20 },
+    { x: 320, y: 240, w: 200, h: 20 },
+];
+
+// klasa krolik
+class Bunny{
+
+    constructor({img,x,y}) {
+        this.img = img;
+        this.x = x;
+        this.y = y;
+        this.state = 'ready';
+        this.velocity = 0;
+        this.weight = 1;
+        this.onGround = false;
+    }
+
+
+
+
+    draw(){
+        prevY = player.y;
+
+        ctx.drawImage(this.img, player.x, player.y);
+
+        if (keys.left) {
+            player.x -= player.speed;
+            this.state = 'ready';
+
+
+        }
+        if (keys.right) {
+            player.x += player.speed;
+            this.state = 'ready';
+
+        }
+        if (keys.up && this.onGround) {
+            this.velocity = -25; // siła skoku
+            this.onGround = false;
+        }
+
+
+
+
+        player.y += this.velocity;
+        this.velocity += this.weight;
+
+        // PODŁOGA (lądowanie)
+        if (player.y >= groundY) {
+            player.y = groundY;
+            this.velocity = 0;
+            this.onGround = true;
+        } else {
+            this.onGround = false;
+        }
+
+
+        this.state = this.onGround ? "ready" : "jump";
+        if( this.state == 'ready' ) this.img = img_ready;
+        if( this.state == 'jump' ) this.img = img_jump;
+
+
+        const bunnyWidth = 120;
+        if (player.x < 0) player.x = 0;
+        if (player.x + bunnyWidth > 1200) {
+            player.x = 1200 - bunnyWidth;
+        }
+
+
+
+    }
+
+
+}
+const bunny = new Bunny({
+    img: img_ready,
+
+
+
+
+});
+
+
+
+
+// ruszanie sie podstaci
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img_background, 0, 0, );
+
+    bunny.draw ();
+
+    for (const p of platforms) {
+        if (img_platform.complete && img_platform.naturalWidth > 0) {
+            ctx.drawImage(img_platform, p.x, p.y, p.w, p.h);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
