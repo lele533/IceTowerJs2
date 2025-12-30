@@ -1,9 +1,7 @@
 const canvas = document.getElementById("game_canvas");
 const ctx = canvas.getContext("2d");
 
-// =====================
-// OBRAZKI
-// =====================
+// zdjecia
 const img_background = new Image();
 img_background.src = "tło3.jpg";
 
@@ -16,13 +14,10 @@ img_jump.src = "bunny1_jump.png";
 const img_platform = new Image();
 img_platform.src = "platform.png";
 
-// platforma startowa z tabliczką
 const img_platform_start = new Image();
 img_platform_start.src = "platform_start.png";
 
-// =====================
-// KLAWISZE (ZOSTAWIONE)
-// =====================
+// klaiwsze i nasluchiwacze
 const keys = { left: false, right: false, up: false };
 
 window.addEventListener("keydown", (e) => {
@@ -37,9 +32,7 @@ window.addEventListener("keyup", (e) => {
     if (e.code === "ArrowUp") keys.up = false;
 });
 
-// =====================
-// USTAWIENIA
-// =====================
+// ustawienia postaci ,platform
 const bunnyWidth = 120;
 const bunnyHeight = 191;
 
@@ -57,26 +50,20 @@ const START_PLATFORM_COUNT = 9;
 
 const cameraLine = 220;
 
-// =====================
-// SCORE
-// =====================
-const SCORE_SCALE = 10;
+// zmienne wynikowe
+const SCORE_SCALE = 100;
 let totalScroll = 0;
 let score = 0;
 let lastScore = 0;
 let bestScore = Number(localStorage.getItem("bestScore") || 0);
 
-// =====================
-// STAN GRY
-// =====================
+// stan gry
 let gameState = "menu";
 
 // przycisk menu
 const playBtn = { x: 0, y: 0, w: 260, h: 70 };
 
-// =====================
-// HELPERY
-// =====================
+// helpery
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -86,18 +73,18 @@ function strokeFillText(text, x, y) {
     ctx.fillText(text, x, y);
 }
 
-// spójny respawn platform (żeby nie powtarzać kodu)
+//  respawn platform
 function spawnPlatform(p, y) {
     const w = randInt(PLATFORM_MIN_W, PLATFORM_MAX_W);
     p.w = w;
-    p.h = 20;
+    p.h = 30;
     p.x = randInt(0, WORLD_W - w);
     p.y = y;
 }
 
-// =====================
-// ŚWIAT
-// =====================
+
+// świat
+
 const platforms = [];
 
 const startPlatform = {
@@ -109,9 +96,8 @@ const startPlatform = {
 
 const player = { x: 0, y: 0, speed: 8 };
 
-// =====================
 // RESET
-// =====================
+
 function resetWorld() {
     totalScroll = 0;
     score = 0;
@@ -138,9 +124,8 @@ function resetWorld() {
     bunny.onGround = false;
 }
 
-// =====================
 // KONIEC GRY
-// =====================
+
 function endGame() {
     lastScore = score;
     if (lastScore > bestScore) {
@@ -151,9 +136,9 @@ function endGame() {
     keys.left = keys.right = keys.up = false;
 }
 
-// =====================
-// KRÓLIK
-// =====================
+
+// klasa bunny
+
 class Bunny {
     constructor({ img }) {
         this.img = img;
@@ -161,7 +146,7 @@ class Bunny {
         this.weight = 1.75;
         this.onGround = false;
     }
-
+    // metoda draw
     draw() {
         const prevY = player.y;
 
@@ -197,13 +182,13 @@ class Bunny {
             }
         }
 
-        // spadł na dół ekranu
+        // spadanie na dol
         if (!this.onGround && player.y >= canvas.height - bunnyHeight) {
             endGame();
             return;
         }
 
-        // ===== KAMERA + SCORE =====
+        // kamera z wynik
         if (player.y < cameraLine) {
             const dy = cameraLine - player.y;
             player.y = cameraLine;
@@ -225,9 +210,7 @@ class Bunny {
 
 const bunny = new Bunny({ img: img_ready });
 
-// =====================
-// HUD & MENU
-// =====================
+// score i menu
 function drawHUD() {
     ctx.font = "24px Arial";
     ctx.fillStyle = "white";
@@ -286,9 +269,9 @@ canvas.addEventListener("click", (e) => {
     }
 });
 
-// =====================
-// LOOP
-// =====================
+
+
+// funcja animate
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img_background, 0, 0);
