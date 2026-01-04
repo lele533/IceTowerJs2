@@ -67,7 +67,7 @@ const playBtn = { x: 0, y: 0, w: 260, h: 70 };
 function randInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
+//rysowanie obwodu w ramkach
 function strokeFillText(text, x, y) {
     ctx.strokeText(text, x, y);
     ctx.fillText(text, x, y);
@@ -94,7 +94,7 @@ const startPlatform = {
     y: 0, // ustawiane w resetWorld
 };
 
-const player = { x: 0, y: 0, speed: 8 };
+const player = { x: 0, y: 0, speed: 11 };
 
 // RESET
 
@@ -271,7 +271,7 @@ canvas.addEventListener("click", (e) => {
 
 
 
-// funcja animate
+// funcja animate (petla gry )
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img_background, 0, 0);
